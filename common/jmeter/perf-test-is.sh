@@ -54,7 +54,7 @@
 # Finally, execute test scenarios using the function test_scenarios
 
 # Concurrent users (these will by multiplied by the number of JMeter servers)
-default_concurrent_users="50 100 150 300 500"
+default_concurrent_users="50 100"
 # Application heap Sizes
 default_heap_sizes="2G"
 
@@ -351,7 +351,7 @@ function run_test_data_scripts() {
 
     echo "Running test data setup scripts"
     echo "=========================================================================================="
-    declare -a scripts=("TestData_SCIM2_Add_User.jmx" "TestData_Add_OAuth_Apps.jmx" "TestData_Add_SAML_Apps.jmx" "TestData_Add_images.jmx" "TestData_Add_Device_Flow_OAuth_Apps.jmx")
+    declare -a scripts=("TestData_SCIM2_Add_User.jmx" "TestData_Add_OAuth_Apps.jmx")
 #    declare -a scripts=("TestData_Add_Super_Tenant_Users.jmx" "TestData_Add_OAuth_Apps.jmx" "TestData_Add_SAML_Apps.jmx" "TestData_Add_Tenants.jmx" "TestData_Add_Tenant_Users.jmx")
     setup_dir="/home/ubuntu/workspace/jmeter/setup"
 
@@ -397,20 +397,6 @@ function initiailize_test() {
             for name in "${exclude_scenario_names[@]}"; do
                 if [[ ${scenario[name]} =~ $name ]]; then
                     scenario[skip]=true
-                fi
-            done
-        done
-    fi
-    
-    if [[ ! -z $mode ]]; then
-        declare -n scenario
-        for scenario in ${!test_scenario@}; do
-            scenario[skip]=true
-            modeValues=${scenario[modes]}
-            for i in $modeValues; do
-                if [ "$i" == $mode ]; then
-                    scenario[skip]=false
-                    break
                 fi
             done
         done
@@ -528,7 +514,7 @@ function test_scenarios() {
 
                 before_execute_test_scenario
 
-                export JVM_ARGS="-Xms$jmeter_client_heap_size -Xmx$jmeter_client_heap_size -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$report_location/jmeter_gc.log $JMETER_JVM_ARGS"
+                export JVM_ARGS="-Xms$jmeter_client_heap_size -Xmx$jmeter_client_heap_size -Xloggc:$report_location/jmeter_gc.log $JMETER_JVM_ARGS"
 
                 local jmeter_command="jmeter -n -t $script_dir/$jmx_file"
                 for param in "${jmeter_params[@]}"; do
