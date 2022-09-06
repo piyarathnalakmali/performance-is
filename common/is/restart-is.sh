@@ -80,11 +80,15 @@ rm -rf $carbon_home/repository/logs/*
 echo "Killing All Carbon Servers..."
 killall java
 
+echo "Modifying the deployment.toml file"
+sed -i '58,59d' $carbon_home/repository/conf/deployment.toml || echo "Deleting from deployment.toml failed!"
+sed -i '58i enabled = false' $carbon_home/repository/conf/deployment.toml || echo "Adding to deployment.toml file failed!"
+
 echo "Enabling GC Logs..."
-export JAVA_OPTS="-XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:${carbon_home}/repository/logs/gc.log"
-JAVA_OPTS+=" -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="${carbon_home}/repository/logs/heap-dump.hprof""
+# export JAVA_OPTS="-XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:${carbon_home}/repository/logs/gc.log"
+# JAVA_OPTS+=" -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="${carbon_home}/repository/logs/heap-dump.hprof""
 export JVM_MEM_OPTS="-Xms${heap_size} -Xmx${heap_size}"
-echo "JAVA_OPTS: $JAVA_OPTS"
+# echo "JAVA_OPTS: $JAVA_OPTS"
 echo "JVM_MEM_OPTS: $JVM_MEM_OPTS"
 
 echo "Restarting identity server..."
